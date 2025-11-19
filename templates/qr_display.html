@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}QR Code - {{ machine[1] }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-header">
+                <h3>{{ machine[1] }}</h3>
+                <p class="mb-0">{{ machine[2] }}</p>
+            </div>
+            <div class="card-body">
+                <img src="{{ url_for('qr_image', machine_id=machine[0]) }}" 
+                     alt="QR Code" 
+                     class="img-fluid" 
+                     style="max-width: 400px;">
+                <p class="mt-3 text-muted">Scan to access machine inventory</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

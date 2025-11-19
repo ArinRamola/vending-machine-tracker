@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="text-white mb-4">
+            <i class="fas fa-chart-line"></i> Analytics Dashboard
+        </h2>
+    </div>
+</div>
+
+<!-- Chart Display -->
+{% if chart_exists %}
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-chart-bar"></i> Snack Popularity Chart
+    </div>
+    <div class="card-body text-center">
+        <img src="{{ url_for('static', filename='charts/popularity.png') }}?{{ range(1, 10000) | random }}" 
+             alt="Popularity Chart" 
+             class="img-fluid" 
+             style="max-width: 100%; height: auto;">
+        <p class="text-muted mt-3">
+            <i class="fas fa-info-circle"></i> Chart shows the most frequently restocked/updated snacks
+        </p>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> 
+    <strong>No chart available yet.</strong> Charts are generated automatically when vendors submit updates.
+    Ask a vendor to submit some restocking updates to generate analytics.
+</div>
+{% endif %}
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-clipboard-list text-primary"></i>
+            <h3>{{ updates|length }}</h3>
+            <p>Total Updates</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-candy-cane text-success"></i>
+            <h3>{{ popularity|length }}</h3>
+            <p>Unique Products</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <i class="fas fa-users text-info"></i>
+            <h3>{{ vendor_activity|length }}</h3>
+            <p>Active Vendors</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Snack Popularity Table -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="fas fa-trophy"></i> Top Snacks by Activity
+            </div>
+            <div class="card-body">
+                {% if popularity %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Snack/Item</th>
+                                <th>Updates</th>
+                                <th>Popularity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in popularity[:10] %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><strong>{{ item[0] }}</strong></td>
+                                <td>{{ item[1] }}</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        {% set max_count = popularity[0][1] %}
+                                        {% set percent = (item[1] / max_count * 100) %}
+                                        <div class="progress-bar bg-success" style="width: {{ percent }}%">
+                                            {{ percent|round|int }}%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> No data available yet
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Vendor Activity Table -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="fas fa-user-tie"></i> Vendor Activity
+            </div>
+            <div class="card-body">
+                {% if vendor_activity %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Vendor</th>
+                                <th>Total Updates</th>
+                                <th>Activity Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vendor in vendor_activity %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>
+                                    <span class="badge bg-success">{{ vendor[0] }}</span>
+                                </td>
+                                <td><strong>{{ vendor[1] }}</strong></td>
+                                <td>
+                                    {% if vendor[1] >= 10 %}
+                                        <span class="badge bg-success">High</span>
+                                    {% elif vendor[1] >= 5 %}
+                                        <span class="badge bg-info">Medium</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Low</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> No vendor data available yet
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Machine Activity -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-desktop"></i> Machine Activity Report
+    </div>
+    <div class="card-body">
+        {% if machine_activity %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Machine</th>
+                        <th>Total Updates</th>
+                        <th>Activity Level</th>
+                        <th>Visual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for machine in machine_activity %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ machine[0] }}</strong></td>
+                        <td>{{ machine[1] }} updates</td>
+                        <td>
+                            {% if machine[1] >= 10 %}
+                                <span class="badge bg-success"><i class="fas fa-arrow-up"></i> Very Active</span>
+                            {% elif machine[1] >= 5 %}
+                                <span class="badge bg-info"><i class="fas fa-minus"></i> Active</span>
+                            {% else %}
+                                <span class="badge bg-warning"><i class="fas fa-arrow-down"></i> Low Activity</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="progress" style="height: 25px; min-width: 200px;">
+                                {% set max_machine = machine_activity[0][1] %}
+                                {% set machine_percent = (machine[1] / max_machine * 100) %}
+                                <div class="progress-bar 
+                                    {% if machine[1] >= 10 %}bg-success
+                                    {% elif machine[1] >= 5 %}bg-info
+                                    {% else %}bg-warning{% endif %}" 
+                                    style="width: {{ machine_percent }}%">
+                                    {{ machine[1] }}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No machine activity data available yet
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Recent Updates Timeline -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-history"></i> Recent Update History
+    </div>
+    <div class="card-body">
+        {% if updates %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Time</th>
+                        <th>Vendor</th>
+                        <th>Machine</th>
+                        <th>Update Information</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for update in updates[:20] %}
+                    <tr>
+                        <td>
+                            <small>{{ update[4] }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-success">{{ update[1] }}</span>
+                        </td>
+                        <td>
+                            <i class="fas fa-desktop"></i> {{ update[2] }}
+                        </td>
+                        <td>{{ update[3] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> 
+            <p class="mb-0"><strong>No updates recorded yet!</strong></p>
+            <p class="mb-0">Vendors need to submit restocking updates to generate analytics data.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-sync text-primary" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">Refresh Chart</h5>
+                <p class="text-muted">Regenerate analytics chart</p>
+                <a href="{{ url_for('analytics') }}" class="btn btn-primary" onclick="location.reload();">
+                    <i class="fas fa-sync"></i> Refresh
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-box text-success" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">Inventory</h5>
+                <p class="text-muted">View complete inventory</p>
+                <a href="{{ url_for('inventory') }}" class="btn btn-success">
+                    <i class="fas fa-box"></i> View Inventory
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-clipboard-list text-info" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">All Updates</h5>
+                <p class="text-muted">View complete update log</p>
+                {% if session.role == 'admin' %}
+                <a href="{{ url_for('view_updates') }}" class="btn btn-info">
+                    <i class="fas fa-list"></i> View All
+                </a>
+                {% else %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-info">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

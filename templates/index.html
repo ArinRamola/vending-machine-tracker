@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Vending Machine System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="text-center text-white mb-5">
+            <h1 class="display-3 fw-bold mb-3">
+                <i class="fas fa-store"></i> Vending Machine System
+            </h1>
+            <p class="lead fs-4">Smart Inventory Management for Modern Vending Machines</p>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body p-4">
+                        <i class="fas fa-box-open text-primary" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">Inventory Tracking</h4>
+                        <p class="text-muted">Monitor stock levels and expiry dates in real-time across all machines</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body p-4">
+                        <i class="fas fa-qrcode text-success" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">QR Code Access</h4>
+                        <p class="text-muted">Quick access to machine information via QR code scanning</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body p-4">
+                        <i class="fas fa-chart-line text-warning" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">Analytics Dashboard</h4>
+                        <p class="text-muted">Track snack popularity and restocking patterns</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card text-center h-100 border-primary">
+                    <div class="card-body p-4">
+                        <i class="fas fa-user-shield text-primary" style="font-size: 2.5rem;"></i>
+                        <h5 class="mt-3">Admin</h5>
+                        <p class="text-muted mb-4">Manage inventory, machines, and users</p>
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">Admin Login</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100 border-success">
+                    <div class="card-body p-4">
+                        <i class="fas fa-truck text-success" style="font-size: 2.5rem;"></i>
+                        <h5 class="mt-3">Vendor</h5>
+                        <p class="text-muted mb-4">Submit restocking updates and maintenance reports</p>
+                        <a href="{{ url_for('login') }}" class="btn btn-success">Vendor Login</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100 border-info">
+                    <div class="card-body p-4">
+                        <i class="fas fa-user text-info" style="font-size: 2.5rem;"></i>
+                        <h5 class="mt-3">Employee</h5>
+                        <p class="text-muted mb-4">View inventory and machine status</p>
+                        <a href="{{ url_for('login') }}" class="btn btn-info text-white">Employee Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-5 bg-white">
+            <div class="card-body p-4">
+                <h4 class="mb-3"><i class="fas fa-info-circle text-primary"></i> System Features</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Real-time stock monitoring</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Expiry date tracking</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Multi-machine support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Role-based access control</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Vendor update logging</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> QR code generation</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Analytics & reporting</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Secure authentication</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <p class="text-white">
+                Don't have an account? 
+                <a href="{{ url_for('register') }}" class="text-white fw-bold text-decoration-underline">Register as Employee</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Vendor Updates{% endblock %}
+{% block content %}
+<h2 class="text-white mb-4">
+    <i class="fas fa-history"></i> Vendor Update History
+</h2>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Vendor</th>
+                        <th>Machine</th>
+                        <th>Information</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for update in updates %}
+                    <tr>
+                        <td>{{ update[0] }}</td>
+                        <td><span class="badge bg-success">{{ update[1] }}</span></td>
+                        <td>{{ update[2] }}</td>
+                        <td>{{ update[3] }}</td>
+                        <td>{{ update[4] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

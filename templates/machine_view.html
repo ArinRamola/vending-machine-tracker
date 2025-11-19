@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Machine Inventory{% endblock %}
+{% block content %}
+<h2 class="text-white mb-4">
+    <i class="fas fa-desktop"></i> {{ machine[1] }} - Inventory
+</h2>
+<div class="card">
+    <div class="card-header">
+        <strong>Location:</strong> {{ machine[2] }}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Snack</th>
+                        <th>Stock</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for snack in snacks %}
+                    <tr>
+                        <td>{{ snack[1] }}</td>
+                        <td>{{ snack[2] }}</td>
+                        <td>{{ snack[3] }}</td>
+                        <td>
+                            {% if snack[2] > 20 %}
+                            <span class="badge bg-success">Available</span>
+                            {% elif snack[2] > 0 %}
+                            <span class="badge bg-warning">Low</span>
+                            {% else %}
+                            <span class="badge bg-danger">Out</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

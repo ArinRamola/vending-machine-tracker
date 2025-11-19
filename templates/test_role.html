@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Role Check{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3><i class="fas fa-user-check"></i> Current Session Info</h3>
+            </div>
+            <div class="card-body">
+                {% if session.user_id %}
+                <div class="alert alert-success">
+                    <h4><i class="fas fa-check-circle"></i> You are logged in!</h4>
+                </div>
+                
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="30%">User ID</th>
+                        <td>{{ session.user_id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Username</th>
+                        <td><strong>{{ session.username }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Role</th>
+                        <td>
+                            {% if session.role == 'admin' %}
+                                <span class="badge bg-danger" style="font-size: 1.2rem;">
+                                    <i class="fas fa-user-shield"></i> ADMIN
+                                </span>
+                            {% elif session.role == 'vendor' %}
+                                <span class="badge bg-success" style="font-size: 1.2rem;">
+                                    <i class="fas fa-truck"></i> VENDOR
+                                </span>
+                            {% elif session.role == 'employee' %}
+                                <span class="badge bg-info" style="font-size: 1.2rem;">
+                                    <i class="fas fa-user"></i> EMPLOYEE
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">Unknown</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+
+                <hr>
+
+                <h5>Your Permissions:</h5>
+                <ul class="list-group">
+                    {% if session.role == 'admin' %}
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> Add/Edit/Delete Snacks
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> Add/Delete Machines
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> View All Updates
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> Manage Users
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> Full System Access
+                        </li>
+                    {% elif session.role == 'vendor' %}
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> Submit Vendor Updates
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> View Update History
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> View Inventory
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> View Machines
+                        </li>
+                        <li class="list-group-item list-group-item-danger">
+                            <i class="fas fa-times"></i> Cannot Add/Edit Snacks
+                        </li>
+                        <li class="list-group-item list-group-item-danger">
+                            <i class="fas fa-times"></i> Cannot Add/Edit Machines
+                        </li>
+                    {% elif session.role == 'employee' %}
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> View Inventory
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> View Machines
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> View Analytics
+                        </li>
+                        <li class="list-group-item list-group-item-success">
+                            <i class="fas fa-check"></i> View QR Codes
+                        </li>
+                        <li class="list-group-item list-group-item-danger">
+                            <i class="fas fa-times"></i> Cannot Add/Edit Snacks
+                        </li>
+                        <li class="list-group-item list-group-item-danger">
+                            <i class="fas fa-times"></i> Cannot Submit Updates
+                        </li>
+                    {% endif %}
+                </ul>
+
+                <hr>
+
+                <h5>Recommended Page:</h5>
+                <div class="text-center mt-3">
+                    {% if session.role == 'admin' %}
+                        <a href="{{ url_for('admin_page') }}" class="btn btn-danger btn-lg">
+                            <i class="fas fa-tachometer-alt"></i> Go to Admin Dashboard
+                        </a>
+                    {% elif session.role == 'vendor' %}
+                        <a href="{{ url_for('vendor_update') }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-clipboard-list"></i> Go to Vendor Updates
+                        </a>
+                    {% elif session.role == 'employee' %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-info btn-lg text-white">
+                            <i class="fas fa-home"></i> Go to Dashboard
+                        </a>
+                    {% endif %}
+                </div>
+
+                {% else %}
+                <div class="alert alert-warning">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Not logged in!</h4>
+                    <p>Please login to see your session information.</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Login Now</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="text-white mb-4">
+            <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+        </h2>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-desktop text-primary"></i>
+            <h3>{{ total_machines }}</h3>
+            <p>Total Machines</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-box text-success"></i>
+            <h3>{{ total_stock }}</h3>
+            <p>Total Stock</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-shopping-bag text-info"></i>
+            <h3>{{ snacks|length }}</h3>
+            <p>Snack Types</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <i class="fas fa-exclamation-triangle text-warning"></i>
+            <h3>{{ expiring }}</h3>
+            <p>Expiring Soon</p>
+        </div>
+    </div>
+</div>
+
+<!-- Snacks Management -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-candy-cane"></i> Snack Inventory Management
+    </div>
+    <div class="card-body">
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addSnackModal">
+            <i class="fas fa-plus"></i> Add New Snack
+        </button>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Stock</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for snack in snacks %}
+                    <tr>
+                        <td>{{ snack[0] }}</td>
+                        <td><strong>{{ snack[1] }}</strong></td>
+                        <td>{{ snack[2] }}</td>
+                        <td>{{ snack[3] }}</td>
+                        <td>
+                            {% if snack[2] == 0 %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                            {% elif snack[2] < 10 %}
+                                <span class="badge bg-warning">Low Stock</span>
+                            {% else %}
+                                <span class="badge bg-success">Available</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#updateStockModal{{ snack[0] }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <form method="POST" action="{{ url_for('delete_snack', snack_id=snack[0]) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this snack?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- Update Stock Modal -->
+                    <div class="modal fade" id="updateStockModal{{ snack[0] }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Update Stock: {{ snack[1] }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="POST" action="{{ url_for('update_snack', snack_id=snack[0]) }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Current Stock: <strong>{{ snack[2] }}</strong></label>
+                                            <input type="number" class="form-control" name="stock" value="{{ snack[2] }}" required min="0">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Update Stock</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Machines Management -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-desktop"></i> Machine Management
+    </div>
+    <div class="card-body">
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addMachineModal">
+            <i class="fas fa-plus"></i> Add New Machine
+        </button>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>QR Code</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for machine in machines %}
+                    <tr>
+                        <td>{{ machine[0] }}</td>
+                        <td><strong>{{ machine[1] }}</strong></td>
+                        <td><i class="fas fa-map-marker-alt"></i> {{ machine[2] }}</td>
+                        <td>
+                            <a href="{{ url_for('qr', machine_id=machine[0]) }}" class="btn btn-sm btn-info" target="_blank">
+                                <i class="fas fa-qrcode"></i> View QR
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('machine', id=machine[0]) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('delete_machine', machine_id=machine[0]) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this machine?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Users List -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-users"></i> System Users
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Badge</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user[0] }}</td>
+                        <td>{{ user[1] }}</td>
+                        <td>{{ user[2]|title }}</td>
+                        <td>
+                            {% if user[2] == 'admin' %}
+                                <span class="badge bg-danger">Admin</span>
+                            {% elif user[2] == 'vendor' %}
+                                <span class="badge bg-success">Vendor</span>
+                            {% else %}
+                                <span class="badge bg-info">Employee</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Snack Modal -->
+<div class="modal fade" id="addSnackModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Snack</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_snack') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Snack Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Stock Quantity</label>
+                        <input type="number" class="form-control" name="stock" required min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" name="expiry" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Snack</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Machine Modal -->
+<div class="modal fade" id="addMachineModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Machine</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_machine') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Machine Name</label>
+                        <input type="text" class="form-control" name="name" required placeholder="e.g., Lobby Machine A">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" name="location" required placeholder="e.g., Building A - 1st Floor">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Machine</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

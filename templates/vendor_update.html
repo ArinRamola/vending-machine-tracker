@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Vendor Update{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-clipboard-list"></i> Submit Vendor Update</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Machine</label>
+                        <select class="form-select" name="machine" required>
+                            <option value="">Select a machine...</option>
+                            {% for machine in machines %}
+                            <option value="{{ machine[1] }}">{{ machine[1] }} - {{ machine[2] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Update Information</label>
+                        <textarea class="form-control" name="info" rows="4" required placeholder="e.g., Restocked Chips x50, Chocolate x30"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-paper-plane"></i> Submit Update
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if recent_updates %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-history"></i> Your Recent Updates</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Machine</th>
+                                <th>Info</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for update in recent_updates %}
+                            <tr>
+                                <td>{{ update[3] }}</td>
+                                <td>{{ update[1] }}</td>
+                                <td>{{ update[2] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
