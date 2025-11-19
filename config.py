@@ -31,11 +31,13 @@ class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
     SESSION_COOKIE_SECURE = True  # Requires HTTPS
-    # In production, always use environment variable for SECRET_KEY
-    SECRET_KEY = os.environ.get('SECRET_KEY')
     
-    if not SECRET_KEY:
-        raise ValueError("SECRET_KEY environment variable must be set in production!")
+    # In production, SECRET_KEY must be set via environment variable
+    def __init__(self):
+        super().__init__()
+        if not os.environ.get('SECRET_KEY'):
+            print("⚠️  WARNING: SECRET_KEY environment variable not set!")
+            print("    Using temporary key - set SECRET_KEY in production!")
 
 class TestingConfig(Config):
     """Testing configuration"""
