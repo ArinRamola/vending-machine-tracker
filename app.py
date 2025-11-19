@@ -9,7 +9,7 @@ import secrets
 
 app = Flask(__name__)
 # Generate a secure secret key
-app.secret_key = secrets.token_hex(32)
+app.secret_key = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
 
 DB = "database.db"
 
@@ -577,14 +577,28 @@ if __name__ == "__main__":
     os.makedirs("static/qrcodes", exist_ok=True)
     os.makedirs("static/charts", exist_ok=True)
     
-    print("\n" + "="*60)
-    print("  VENDING MACHINE MANAGEMENT SYSTEM")
-    print("="*60)
-    print("\nDemo Login Credentials:")
-    print("-" * 60)
-    print("Admin:    username: admin     password: admin123")
-    print("Vendor:   username: vendor1   password: vendor123")
-    print("Employee: username: employee1 password: emp123")
-    print("="*60 + "\n")
+    # Check if running in production
+    is_production = os.environ.get('FLASK_ENV') == 'production'
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Only show credentials in development
+    if not is_production:
+        print("\n" + "="*60)
+        print("  VENDING MACHINE MANAGEMENT SYSTEM")
+        print("="*60)
+        print("\nDemo Login Credentials:")
+        print("-" * 60)
+        print("Admin:    username: admin     password: admin123")
+        print("Vendor:   username: vendor1   password: vendor123")
+        print("Employee: username: employee1 password: emp123")
+        print("="*60 + "\n")
+    else:
+        print("\n" + "="*60)
+        print("  VENDING MACHINE MANAGEMENT SYSTEM")
+        print("  Running in PRODUCTION mode")
+        print("="*60 + "\n")
+    
+    # Get port from environment variable (Render/Heroku provide this)
+    port = int(os.environ.get('PORT', 5000))
+    
+    # Run the app
+    app.run(debug=not is_production, host='0.0.0.0', port=port)
